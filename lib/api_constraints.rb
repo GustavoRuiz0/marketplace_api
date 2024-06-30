@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApiConstraints
   attr_reader :options
 
