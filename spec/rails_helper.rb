@@ -9,7 +9,7 @@ require 'rspec/rails'
 
 rails_support_path = Rails.root.join('spec', 'support', '**', '*.rb')
 
-Dir[rails_support_path].each { |file| require file}
+Dir[rails_support_path].each { |file| require file }
 
 Dir[rails_support_path]
 if ENV['RAILS_ENV'] == 'test'
