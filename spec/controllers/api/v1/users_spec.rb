@@ -11,7 +11,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       get :show, params: { id: @user.id }, format: :json
 
       it 'returns the information about a reporter on hash' do
-        @user_response = JSON.parse(response.body, symbolize_names: true)
+        @user_response = json_response
         puts @user.email
         puts user_response[:email]
         expect(@user_response[:email]).to eq @user.emal
@@ -29,7 +29,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       end
 
       it 'renders the json representation for the user record just created' do
-        @user_response = JSON.parse(response.body, symbolize_names: true)
+        @user_response = json_response
         expect(@user_response[:email]).to eq @user_attributes[:email]
       end
       it { should respond_with 201 }
@@ -44,12 +44,12 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       end
 
       it 'renders json erro' do
-        @user_response = JSON.parse(response.body, symbolize_names: true)
+        @user_response = json_response
         expect(@user_response).to have_key(:errors)
       end
 
       it 'renders the json errors on why the user could not be created' do
-        @user_response = JSON.parse(response.body, symbolize_names: true)
+        @user_response = json_response
         expect(@user_response[:errors][:email]).to include 'can\'t be blank'
       end
     end
@@ -66,7 +66,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       end
 
       it 'renders the json representation for updated user' do
-        user_response = JSON.parse(response.body, symbolize_names: true)
+        user_response = json_response
         expect(user_response[:email]).to eql 'newemail@teste.com'
       end
 
@@ -83,16 +83,25 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       end
 
       it 'renders an error json' do
-        user_response = JSON.parse(response.body, symbolize_names: true)
+        user_response = json_response
         expect(user_response).to have_key(:errors)
       end
 
       it 'renders the json errors on why the user could not be updated' do
-        user_response = JSON.parse(response.body, symbolize_names: true)
+        user_response = json_response
         expect(user_response[:errors][:email]).to include 'is invalid'
       end
 
       it { should respond_with 422 }
     end
+  end
+
+  describe 'DELETE #destroy' do
+    before(:each) do 
+      @user = FactoryBot.create(:user)
+      delete :destroy, params: { id: @user.id }, format: :json
+    end
+
+    it { should respond_with 204 }
   end
 end

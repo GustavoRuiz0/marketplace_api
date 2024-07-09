@@ -29,6 +29,14 @@ module Api
         render json: { errors: user.errors }, status: 422
       end
 
+      def destroy
+        @user = User.find(params[:id])
+
+        return render json: 'User Deleted!', status: 204 if @user.destroy
+
+        render json: { errors: user.errors }, status: 422
+      end
+
       private
 
       def user_params
