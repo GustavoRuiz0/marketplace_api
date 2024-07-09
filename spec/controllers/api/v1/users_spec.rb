@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::UsersController, type: :controller do
   before(:each) { request.headers['Accept'] = 'application/localhost:3000.v1' }
 
-  describe 'GET /index' do
+  describe 'GET #index' do
     before(:each) do
       @user = FactoryBot.create :user
       get :show, params: { id: @user.id }, format: :json
@@ -52,6 +52,47 @@ RSpec.describe Api::V1::UsersController, type: :controller do
         @user_response = JSON.parse(response.body, symbolize_names: true)
         expect(@user_response[:errors][:email]).to include 'can\'t be blank'
       end
+    end
+  end
+
+  describe 'PUT/PAT #update' do
+    context 'when is successfully updated' do
+      before(:each) do
+        @user = FactoryBot.create(:user)
+        patch :update, params: {
+          id: @user.id,
+          user: { email: "newemail@teste.com" }, format: :json
+        }
+      end
+
+      it 'renders the json representation for updated user' do
+        user_response = JSON.parse(response.body, symbolize_names: true)
+        expect(user_response[:email]).to eql 'newemail@teste.com'
+      end
+
+      it { should respond_with :ok }
+    end
+
+    context 'when is not updated' do
+      before(:each) do
+        @user = FactoryBot.create(:user)
+        patch :update, params: {
+          id: @user.id,
+          user: { email: 'bademail.com' }, format: :json
+        }
+      end
+
+      it 'renders an error json' do
+        user_response = JSON.parse(response.body, symbolize_names: true)
+        expect(user_response).to have_key(:errors)
+      end
+
+      it 'renders the json errors on why the user could not be updated' do
+        user_response = JSON.parse(response.body, symbolize_names: true)
+        expect(user_response[:errors][:email]).to include 'is invalid'
+      end
+
+      it { should respond_with 422 }
     end
   end
 end

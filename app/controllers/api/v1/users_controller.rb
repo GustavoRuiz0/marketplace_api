@@ -21,6 +21,14 @@ module Api
         render json: { errors: @user.errors }, status: 422
       end
 
+      def update
+        user = User.find(params[:id])
+
+        return render json: user, status: :ok, location: [:api, user] if user.update(user_params)
+
+        render json: { errors: user.errors }, status: 422
+      end
+
       private
 
       def user_params
